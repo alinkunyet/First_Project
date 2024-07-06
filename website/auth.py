@@ -10,15 +10,15 @@ def login():
 
 @auth.route("/signup", methods=['POST','GET'])
 def signup():
-  message = []
   
   if request.method == 'GET':
     #flashing message
     message = request.args.get('message')
     username = request.args.get('username')
+    
     if message:
       flash(message)
-    return render_template('signup.html', username=username)
+    return render_template('signup.html',message=message, username=username)
     
   elif request.method == 'POST':
     username = request.form['username']
@@ -27,6 +27,12 @@ def signup():
 
     if len(username) < 5:
       message = 'Username must be at least 5 characters.'
+      return redirect(url_for('auth.signup', message=message, username=username))
+    elif len(password) < 8:
+      message = 'Password must be at least 8 characters.'
+      return redirect(url_for('auth.signup', message=message, username=username))
+    elif password != confirmPassword:
+      message = 'Passwords do not match.'
       return redirect(url_for('auth.signup', message=message, username=username))
     else:
       message = 'You have successfully signed up!'
